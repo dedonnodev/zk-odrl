@@ -1,0 +1,14 @@
+.direnv/
+node_modules/
+
+# build files, recreated by make hello
+# Groth16Verifier.sol is committed on purpose
+build/
+*.r1cs
+*.zkey
+*.wtns
+*.ptau
+
+# hardhat
+artifacts/
+cache/

@@ -1,0 +1,14 @@
+{
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+  "@type": "Set",
+  "uid": "http://example.com/policy/hello",
+  "permission": [{
+    "target": "http://example.com/resource",
+    "action": "use",
+    "constraint": [{
+      "leftOperand": "http://example.com/level",
+      "operator": "gteq",
+      "rightOperand": 3
+    }]
+  }]
+}
