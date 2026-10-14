@@ -1,0 +1,19 @@
+{
+  "registry": "http://example.com/registry/employees",
+  "operands": [
+    { "iri": "https://github.com/dedonnodev/zk-odrl/profile#department", "type": "enum",
+      "values": { "RnD": 1, "Admin": 2, "Sales": 3, "Operations": 4 } },
+    { "iri": "https://github.com/dedonnodev/zk-odrl/profile#role", "type": "enum",
+      "values": { "employee": 1, "manager": 2, "contractor": 3 } },
+    { "iri": "https://github.com/dedonnodev/zk-odrl/profile#clearanceLevel", "type": "integer" },
+    { "iri": "https://github.com/dedonnodev/zk-odrl/profile#badgeStatus", "type": "enum",
+      "values": { "active": 1, "suspended": 2 } },
+    { "iri": "https://github.com/dedonnodev/zk-odrl/profile#dayOfWeek", "type": "integer" },
+    { "iri": "http://www.w3.org/ns/odrl/2/dateTime", "type": "dateTime" }
+  ],
+  "resources": [
+    { "target": "http://example.com/resource/printer-3F", "action": "http://www.w3.org/ns/odrl/2/print", "id": 1 },
+    { "target": "http://example.com/resource/printer-3F", "action": "http://www.w3.org/ns/odrl/2/reproduce", "id": 2 },
+    { "target": "http://example.com/resource/archive", "action": "http://www.w3.org/ns/odrl/2/use", "id": 3 }
+  ]
+}

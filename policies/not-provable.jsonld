@@ -1,0 +1,69 @@
+{
+  "@context": [
+    "http://www.w3.org/ns/odrl.jsonld",
+    {
+      "zk": "https://github.com/dedonnodev/zk-odrl/profile#",
+      "ex": "http://example.com/"
+    }
+  ],
+  "@type": "Set",
+  "uid": "ex:policy/printer-3F-not-provable",
+  "profile": "https://github.com/dedonnodev/zk-odrl/profile",
+  "conflict": "prohibit",
+  "permission": [
+    {
+      "target": "ex:resource/printer-3F",
+      "action": "print",
+      "constraint": [
+        {
+          "leftOperand": "zk:department",
+          "operator": "isAnyOf",
+          "rightOperand": [
+            {
+              "@id": "zk:department/RnD"
+            },
+            {
+              "@id": "zk:department/Admin"
+            }
+          ]
+        },
+        {
+          "leftOperand": "zk:dayOfWeek",
+          "operator": "lt",
+          "rightOperand": {
+            "@value": "5",
+            "@type": "xsd:integer"
+          }
+        },
+        {
+          "leftOperand": "count",
+          "operator": "lteq",
+          "rightOperand": {
+            "@value": "10",
+            "@type": "xsd:integer"
+          }
+        }
+      ],
+      "duty": [
+        {
+          "action": "compensate"
+        }
+      ]
+    }
+  ],
+  "prohibition": [
+    {
+      "target": "ex:resource/printer-3F",
+      "action": "print",
+      "constraint": [
+        {
+          "leftOperand": "zk:badgeStatus",
+          "operator": "eq",
+          "rightOperand": {
+            "@id": "zk:badgeStatus/suspended"
+          }
+        }
+      ]
+    }
+  ]
+}

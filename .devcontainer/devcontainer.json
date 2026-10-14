@@ -1,0 +1,25 @@
+{
+  "name": "zk-odrl",
+  "build": { "dockerfile": "Dockerfile" },
+
+  "containerUser": "dev",
+  "remoteUser": "dev",
+  "updateRemoteUserUID": false,
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "files.watcherExclude": { "**/.direnv/**": true, "**/node_modules/**": true },
+        "search.exclude": { "**/.direnv": true }
+      },
+      "extensions": [
+        "mkhl.direnv",
+        "bbenoist.nix"
+      ]
+    }
+  },
+
+  // the tools are loaded from flake.nix by direnv; make setup installs the JS dependencies
+  "postCreateCommand": "direnv allow . && direnv exec . make setup",
+  "waitFor": "postCreateCommand"
+}

@@ -5,7 +5,7 @@
 
   outputs = { nixpkgs, ... }:
     let
-      # measurements are done on x86_64-linux only
+      # measurements are done on x86_64-linux only; the other systems are untested
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
     in
     {

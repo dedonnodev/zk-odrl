@@ -1,0 +1,40 @@
+{
+  "@context": [
+    "http://www.w3.org/ns/odrl.jsonld",
+    { "zk": "https://github.com/dedonnodev/zk-odrl/profile#",
+      "ex": "http://example.com/" }
+  ],
+  "@graph": [
+    {
+      "@type": "Set",
+      "uid": "ex:policy/archive",
+      "profile": "https://github.com/dedonnodev/zk-odrl/profile",
+      "conflict": "prohibit",
+      "permission": [{
+        "target": "ex:resource/archive",
+        "action": "use",
+        "constraint": [{
+          "@type": "LogicalConstraint",
+          "or": { "@list": [
+            { "@id": "ex:policy/archive/c1" },
+            { "@id": "ex:policy/archive/c2" }
+          ] }
+        }]
+      }]
+    },
+    {
+      "@type": "Constraint",
+      "uid": "ex:policy/archive/c1",
+      "leftOperand": "zk:role",
+      "operator": "eq",
+      "rightOperand": { "@id": "zk:role/manager" }
+    },
+    {
+      "@type": "Constraint",
+      "uid": "ex:policy/archive/c2",
+      "leftOperand": "zk:clearanceLevel",
+      "operator": "gteq",
+      "rightOperand": { "@value": "3", "@type": "xsd:integer" }
+    }
+  ]
+}

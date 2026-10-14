@@ -4,7 +4,6 @@
 # Quiet by default, full tool output with V=1 (log in build/build.log).
 B := build
 C := policy
-WHO ?= alice
 SNARKJS := npx snarkjs
 BEACON := 0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20
 SHELL := bash
@@ -18,16 +17,40 @@ run = @{ $(1); } >> $(B)/build.log 2>&1 || { tail -n 20 $(B)/build.log; exit 1; 
 endif
 step = @echo "- $(1)"
 
-.PHONY: hello deny clean
+.PHONY: setup hello deny clean test check compile evaluate
 hello: $(B)/verified.txt
 	@cat $<
 
 # bob has level 2 < 3: the witness cannot be computed, so no proof
 deny: $(B)/$(C).r1cs
 	$(call step,bob: compute witness (must fail))
-	$(call run,node scripts/policy-input.js policies/hello.json policies/bob.json > $(B)/bob.json)
+	$(call run,node scripts/policy-input.js policies/hello/hello.json policies/hello/bob.json > $(B)/bob.json)
 	$(call run,! $(SNARKJS) wtns calculate $(B)/$(C)_js/$(C).wasm $(B)/bob.json $(B)/bob.wtns)
 	@echo "bob: no proof (policy not satisfied)"
+
+# JS dependencies from package-lock.json, inside the flake toolchain
+# (entered with nix develop when the shell is not already in it)
+setup:
+	@if command -v circom >/dev/null; then npm ci; else nix develop -c npm ci; fi
+
+# is POLICY fully compatible with the library? exit 0 if yes
+POLICY ?= policies/printer.jsonld
+check:
+	@node scripts/check-policy.js $(POLICY)
+
+# ODRL policy -> circuit slots + policyHash
+compile:
+	@node scripts/compile-policy.js $(POLICY)
+
+# reference evaluation of POLICY for one user at one instant (no proof)
+ATTRS ?= {"department":"RnD","role":"employee","clearanceLevel":3,"badgeStatus":"active"}
+AT ?= 2026-10-14T10:00:00Z
+evaluate:
+	@node scripts/evaluate-policy.js $(POLICY) '$(ATTRS)' $(AT)
+
+# compiler, compatibility check, policyHash and reference evaluator
+test:
+	node --test "test/**/*.test.js"
 
 $(B):
 	@mkdir -p $@
@@ -59,9 +82,9 @@ contracts/Groth16Verifier.sol: $(B)/$(C).zkey
 	$(call step,export solidity verifier)
 	$(call run,$(SNARKJS) zkey export solidityverifier $< $@)
 
-$(B)/input.json: policies/hello.json policies/$(WHO).json scripts/policy-input.js | $(B)
-	$(call step,policy + $(WHO) attributes -> circuit input)
-	$(call run,node scripts/policy-input.js policies/hello.json policies/$(WHO).json > $@)
+$(B)/input.json: policies/hello/hello.json policies/hello/alice.json scripts/policy-input.js | $(B)
+	$(call step,policy + alice attributes -> circuit input)
+	$(call run,node scripts/policy-input.js policies/hello/hello.json policies/hello/alice.json > $@)
 
 $(B)/proof.json: $(B)/input.json $(B)/$(C).r1cs $(B)/$(C).zkey
 	$(call step,witness and proof)

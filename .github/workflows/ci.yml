@@ -1,0 +1,31 @@
+# Every push and pull request: the same commands as the README, inside the
+# pinned flake toolchain. Actions are pinned by commit.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+      - name: flake
+        run: nix flake check
+      - name: setup
+        run: nix develop -c make setup
+      - name: unit tests
+        run: nix develop -c make test
+      - name: compatibility check
+        run: |
+          nix develop -c make check
+          ! nix develop -c make check POLICY=policies/not-provable.jsonld
+      - name: proof verified on chain
+        run: nix develop -c make hello
+      - name: no proof for an unsatisfied policy
+        run: nix develop -c make deny
